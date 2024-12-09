@@ -100,17 +100,6 @@ namespace Day06
         }
 
         /// <summary>
-        /// Display the current map.
-        /// </summary>
-        public void Display()
-        {
-            foreach (var gridLine in _grid)
-            {
-                Console.WriteLine(gridLine);
-            }
-        }
-
-        /// <summary>
         /// Examines grid and finds number of distinct squares visited.
         /// </summary>
         /// <returns>No. of distinct sqaures visited.</returns>
