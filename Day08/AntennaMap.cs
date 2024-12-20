@@ -206,7 +206,7 @@ namespace Day08
         /// </summary>
         /// <param name="sourceAntenna"></param>
         /// <returns>All antenna pairs for this frequency.</returns>
-        public List<((int,int),(int,int))> getAntennaPairs((int,int) sourceAntenna)
+        public List<((int,int),(int,int))> GetAntennaPairs((int,int) sourceAntenna)
         {
             var x = sourceAntenna.Item1;
             var y = sourceAntenna.Item2;

@@ -13,21 +13,21 @@ namespace Day04
             var wordSearch = File.ReadAllLines("Day04Input.txt");
 
             var totalXmasOccurrences = 0;
-            totalXmasOccurrences += getXmasOccurrences(getHorizontalStripes(wordSearch, false));
-            totalXmasOccurrences += getXmasOccurrences(getHorizontalStripes(wordSearch, true));
-            totalXmasOccurrences += getXmasOccurrences(getVerticalStripes(wordSearch, false));
-            totalXmasOccurrences += getXmasOccurrences(getVerticalStripes(wordSearch, true));
-            totalXmasOccurrences += getXmasOccurrences(getLeftDownDiagonalStripes(wordSearch, false));
-            totalXmasOccurrences += getXmasOccurrences(getLeftDownDiagonalStripes(wordSearch, true));
-            totalXmasOccurrences += getXmasOccurrences(getRightDownDiagonalStripes(wordSearch, false));
-            totalXmasOccurrences += getXmasOccurrences(getRightDownDiagonalStripes(wordSearch, true));
+            totalXmasOccurrences += GetXmasOccurrences(GetHorizontalStripes(wordSearch, false));
+            totalXmasOccurrences += GetXmasOccurrences(GetHorizontalStripes(wordSearch, true));
+            totalXmasOccurrences += GetXmasOccurrences(GetVerticalStripes(wordSearch, false));
+            totalXmasOccurrences += GetXmasOccurrences(GetVerticalStripes(wordSearch, true));
+            totalXmasOccurrences += GetXmasOccurrences(GetLeftDownDiagonalStripes(wordSearch, false));
+            totalXmasOccurrences += GetXmasOccurrences(GetLeftDownDiagonalStripes(wordSearch, true));
+            totalXmasOccurrences += GetXmasOccurrences(GetRightDownDiagonalStripes(wordSearch, false));
+            totalXmasOccurrences += GetXmasOccurrences(GetRightDownDiagonalStripes(wordSearch, true));
 
             Console.WriteLine($"Part 1 answer: {totalXmasOccurrences}");
-            Console.WriteLine($"Part 2 answer: {getX_masOccurrences(wordSearch)}");
+            Console.WriteLine($"Part 2 answer: {GetX_masOccurrences(wordSearch)}");
         }
 
         // Determine number of times XMAS appears.
-        static int getXmasOccurrences(List<string> stripes)
+        static int GetXmasOccurrences(List<string> stripes)
         {
             var total = 0;
             foreach (string stripe in stripes)
@@ -36,7 +36,7 @@ namespace Day04
         }
 
         // Get X_mas blocks in word search.
-        static int getX_masOccurrences(string[] wordSearch)
+        static int GetX_masOccurrences(string[] wordSearch)
         {
             var totalOccurences = 0;
             for (var r = 0; r < wordSearch.Length - 2; r++)
@@ -47,7 +47,7 @@ namespace Day04
                     block.Add(wordSearch[r].Substring(c, 3));
                     block.Add(wordSearch[r+1].Substring(c, 3));
                     block.Add(wordSearch[r+2].Substring(c, 3));
-                    if (containsX_mas(block))
+                    if (ContainsX_mas(block))
                         totalOccurences++;
                 }                
             }            
@@ -55,7 +55,7 @@ namespace Day04
         }
 
         // Determine if a 3x3 grid contains X_Mas in any orientation.
-        static bool containsX_mas(List<string> threeByThreeGrid)
+        static bool ContainsX_mas(List<string> threeByThreeGrid)
         {
             var x_masMask =
                 threeByThreeGrid[0][0].ToString() +
@@ -87,16 +87,16 @@ namespace Day04
         }
 
         // Get all horizontal stripes, go in reverse if flag passed.
-        static List<string> getHorizontalStripes(string[] wordSearch, bool reverse)
+        static List<string> GetHorizontalStripes(string[] wordSearch, bool reverse)
         {
             List<string> stripes = new List<string>();
             foreach (string stripe in wordSearch)            
-                stripes.Add(reverse ? getReverse(stripe) : stripe);            
+                stripes.Add(reverse ? GetReverse(stripe) : stripe);            
             return stripes;
         }
 
         // Get all vertical stripes, go in reverse if flag passed.
-        static List<string> getVerticalStripes(string[] wordSearch, bool reverse)
+        static List<string> GetVerticalStripes(string[] wordSearch, bool reverse)
         {
             List<string> stripes = new List<string>();            
             for (var c = 0; c < wordSearch[0].Length; c++)
@@ -104,13 +104,13 @@ namespace Day04
                 var stripe = "";
                 for (var r = 0; r < wordSearch.Length; r++)
                     stripe += wordSearch[r][c].ToString();
-                stripes.Add(reverse ? getReverse(stripe) : stripe);
+                stripes.Add(reverse ? GetReverse(stripe) : stripe);
             }
             return stripes;
         }
 
         // Get all diagonal left down stripes, go in reverse if flag passed.
-        static List<string> getLeftDownDiagonalStripes(string[] wordSearch, bool reverse)
+        static List<string> GetLeftDownDiagonalStripes(string[] wordSearch, bool reverse)
         {
             List<string> stripes = new List<string>();
             var row = 0; var col = 0;
@@ -123,7 +123,7 @@ namespace Day04
                     stripe += wordSearch[r][c].ToString();
                     r--; c++;
                 }
-                stripes.Add(reverse ? getReverse(stripe) : stripe);
+                stripes.Add(reverse ? GetReverse(stripe) : stripe);
                 row++; col = 0;
             }
             row = wordSearch.Length - 1; col = 1;
@@ -136,14 +136,14 @@ namespace Day04
                     stripe += wordSearch[r][c].ToString();
                     r--; c++;
                 }
-                stripes.Add(reverse ? getReverse(stripe) : stripe);
+                stripes.Add(reverse ? GetReverse(stripe) : stripe);
                 row = wordSearch.Length - 1; col++;
             }
             return stripes;
         }
 
         // Get all diagonal right down stripes, go in reverse if flag passed.
-        static List<string> getRightDownDiagonalStripes(string[] wordSearch, bool reverse)
+        static List<string> GetRightDownDiagonalStripes(string[] wordSearch, bool reverse)
         {
             List<string> stripes = new List<string>();
             var row = 0; var col = wordSearch[0].Length - 1;
@@ -156,7 +156,7 @@ namespace Day04
                     stripe += wordSearch[r][c].ToString();
                     r--; c--;
                 }
-                stripes.Add(reverse ? getReverse(stripe) : stripe);
+                stripes.Add(reverse ? GetReverse(stripe) : stripe);
                 row++; col = wordSearch[0].Length - 1;
             }
             row = wordSearch.Length - 1; col = wordSearch[0].Length - 2;
@@ -169,14 +169,14 @@ namespace Day04
                     stripe += wordSearch[r][c].ToString();
                     r--; c--;
                 }
-                stripes.Add(reverse ? getReverse(stripe) : stripe);
+                stripes.Add(reverse ? GetReverse(stripe) : stripe);
                 row = wordSearch.Length - 1; col--;
             }
             return stripes;
         }
 
         // Reverse passed string.
-        static string getReverse(string s)
+        static string GetReverse(string s)
         {
             var revStr = "";
             foreach (var c in s)

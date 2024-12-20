@@ -28,7 +28,7 @@ namespace Day01
             for (var i = 0; i < idList1.Count; i++)
             {
                 totalDistance += Math.Abs(idList1[i] - idList2[i]);
-                totalSimilarity += idList1[i] * getSimilarity(idList1[i], idList2);
+                totalSimilarity += idList1[i] * GetSimilarity(idList1[i], idList2);
             }
 
             Console.WriteLine($"Part 1 answer: {totalDistance}");
@@ -36,7 +36,7 @@ namespace Day01
         }
 
         // Get number of times n appears in passed list.
-        static int getSimilarity(int n, List<int> idList)
+        static int GetSimilarity(int n, List<int> idList)
         {
             var noOccurrences = 0;
             foreach (var id in idList)           

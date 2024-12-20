@@ -26,8 +26,8 @@ namespace Day02
             var totalSafeWithDampener = 0;
             foreach (var report in reportList)
             {
-                if (isSafe(report, false)) totalSafe++;
-                if (isSafe(report, true)) totalSafeWithDampener++;
+                if (IsSafe(report, false)) totalSafe++;
+                if (IsSafe(report, true)) totalSafeWithDampener++;
             }
 
             Console.WriteLine($"Part 1 answer: {totalSafe}");
@@ -35,7 +35,7 @@ namespace Day02
         }
 
         // Determine if a sequence is safe or not.
-        static bool isSafe(int[] report, bool applyDampener)
+        static bool IsSafe(int[] report, bool applyDampener)
         {
             var first = report[0];
             var second = report[1];
@@ -58,7 +58,7 @@ namespace Day02
                         {
                             var modifiedReport = new List<int>(report);
                             modifiedReport.RemoveAt(j);
-                            if (isSafe(modifiedReport.ToArray(), false)) return true;
+                            if (IsSafe(modifiedReport.ToArray(), false)) return true;
                         }
                     }
                     return false;

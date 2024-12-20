@@ -27,9 +27,9 @@ namespace Day07
             {
                 long target = equation.Item1;
                 long[] operands = equation.Item2;
-                if (solutionExists(target, operands, false))
+                if (SolutionExists(target, operands, false))
                     totalSolutions += target;
-                if (solutionExists(target, operands, true))
+                if (SolutionExists(target, operands, true))
                     totalSolutionsIncConcat += target;
             }
 
@@ -38,7 +38,7 @@ namespace Day07
         }
 
         // Get all possible operators to use in a calc.
-        static List<char[]> getOperatorCombinations(long[] operands, bool includeConcat)
+        static List<char[]> GetOperatorCombinations(long[] operands, bool includeConcat)
         {
             var index = includeConcat ? 4 : 3;
             var n = operands.Length - 1;
@@ -62,7 +62,7 @@ namespace Day07
         }
 
         // Given a list of operators and operands interleave them to calculate a result.
-        static long calcEquation(long[] operands, char[] operators)
+        static long CalcEquation(long[] operands, char[] operators)
         {
             long result = operands[0];
             var currentOperandIndex = 0;
@@ -80,12 +80,12 @@ namespace Day07
         }
 
         // Returns true if a solution exists for some combo of operators.
-        static bool solutionExists(long target, long[] operands, bool includeConcat)
+        static bool SolutionExists(long target, long[] operands, bool includeConcat)
         {
-            var operatorCombinations = getOperatorCombinations(operands, includeConcat);
+            var operatorCombinations = GetOperatorCombinations(operands, includeConcat);
             foreach (var operators in operatorCombinations)
             {
-                var result = calcEquation(operands, operators);
+                var result = CalcEquation(operands, operators);
                 if (result == target) return true;
             }
             return false;

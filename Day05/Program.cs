@@ -24,8 +24,8 @@ namespace Day05
 
             foreach (var update in updates)
             {
-                if (isUpdateValid(update, rules))
-                    centralTotal += int.Parse(getCentreUpdate(update));
+                if (IsUpdateValid(update, rules))
+                    centralTotal += int.Parse(GetCentreUpdate(update));
                 else
                     incorrectlyOrderedUpdates.Add(update);
             }
@@ -33,7 +33,7 @@ namespace Day05
             foreach (var update in incorrectlyOrderedUpdates)
             {
                 var correctedUpdate = correctUpdate(update, rules);
-                centralCorrectedTotal += int.Parse(getCentreUpdate(correctedUpdate));
+                centralCorrectedTotal += int.Parse(GetCentreUpdate(correctedUpdate));
             }
 
             Console.WriteLine($"Part 1 answer: {centralTotal}");
@@ -41,7 +41,7 @@ namespace Day05
         }
 
         // For a given update set determine all rules that would make it illegal.
-        static List<(string, string)> getDisablingRules(string[] updates)
+        static List<(string, string)> GetDisablingRules(string[] updates)
         {
             var illegalPairs = new List<(string, string)>();
             for (int i = 0; i < updates.Length; i++)
@@ -60,20 +60,20 @@ namespace Day05
         }
 
         // Returns true if any of the passed search rules are in rules.
-        static bool containsRules(List<(string,string)> rules, List<(string, string)> searchRules)
+        static bool ContainsRules(List<(string,string)> rules, List<(string, string)> searchRules)
         {
             return rules.Intersect(searchRules).Count() != 0;
         }
 
         // Returns true if all given updates are valid based on passed rules.
-        static bool isUpdateValid(string[] updates, List<(string, string)> rules)
+        static bool IsUpdateValid(string[] updates, List<(string, string)> rules)
         {
-            var disablingRules = getDisablingRules(updates);
-            return !containsRules(rules, disablingRules);
+            var disablingRules = GetDisablingRules(updates);
+            return !ContainsRules(rules, disablingRules);
         }
 
         // Get update in the centre of array.
-        static string getCentreUpdate(string[] updates)
+        static string GetCentreUpdate(string[] updates)
         {
             var pos = (updates.Length - 1) / 2;
             return updates[pos];
@@ -82,7 +82,7 @@ namespace Day05
         // Takes an incorrect update and applies the rules to correctly order it, then returns this.
         static string[] correctUpdate(string[] update, List<(string,string)> rules)
         {            
-            while (!isUpdateValid(update, rules))
+            while (!IsUpdateValid(update, rules))
             {
                 foreach (var rule in rules)
                 {

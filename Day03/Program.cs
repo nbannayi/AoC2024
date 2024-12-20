@@ -14,15 +14,15 @@ namespace Day03
             var memoryLines = File.ReadAllLines("Day03Input.txt");
 
             // Process and add up all the calcs.
-            var calcsList1 = getCalcList(memoryLines, false);
-            var calcsList2 = getCalcList(memoryLines, true);
+            var calcsList1 = GetCalcList(memoryLines, false);
+            var calcsList2 = GetCalcList(memoryLines, true);
 
-            Console.WriteLine($"Part 1 answer: {getTotalCalcs(calcsList1)}");
-            Console.WriteLine($"Part 2 answer: {getTotalCalcs(calcsList2)}");
+            Console.WriteLine($"Part 1 answer: {GetTotalCalcs(calcsList1)}");
+            Console.WriteLine($"Part 2 answer: {GetTotalCalcs(calcsList2)}");
         }
 
         // Get total of all calculations.
-        static long getTotalCalcs(List<string[]> calcsList)
+        static long GetTotalCalcs(List<string[]> calcsList)
         {
             var totalCalcs = 0L;
             foreach (var calcs in calcsList)
@@ -32,7 +32,7 @@ namespace Day03
         }
 
         // Get calcs list.
-        static List<string[]> getCalcList(string[] memoryLines, bool conditional)
+        static List<string[]> GetCalcList(string[] memoryLines, bool conditional)
         {
             var regex = new Regex(@"do\(\)|don't\(\)|mul\(\d{1,3},\d{1,3}\)");
             var calcsList = new List<string[]>();

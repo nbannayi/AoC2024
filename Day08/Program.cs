@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 
 // Day 8: Resonant Collinearity.
 namespace Day08
@@ -25,7 +24,7 @@ namespace Day08
                     var symbol = map.Grid[r][c];
                     if (symbol != '#' && symbol != '.')
                     {
-                        var antennaPairs = map.getAntennaPairs((c, r));
+                        var antennaPairs = map.GetAntennaPairs((c, r));
                         foreach (var ap in antennaPairs)
                         {
                             var antinodes = map.GetAntinodes(ap.Item1, ap.Item2);                                                        
