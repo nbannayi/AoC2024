@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Day16
 {
@@ -22,7 +21,7 @@ namespace Day16
         public int BestScore { get { return _bestScore; } }
         private Dictionary<(int, int), List<(int, int)>> _parents;
         public Dictionary<(int, int), int> Costs { get; set; }
-        public SortedSet<(int, (int, int), Direction, List<(int,int)>)> Queue { get; set; }
+        public SortedSet<(int, (int, int), Direction, List<(int, int)>)> Queue { get; set; }
         private static (int, int, Direction)[] _directions;
 
         /// <summary>
@@ -47,17 +46,17 @@ namespace Day16
             };
 
             // Priority queue for Dijkstra.
-            Queue = new SortedSet<(int, (int, int), Direction, List<(int,int)>)>(
-                Comparer<(int, (int, int), Direction, List<(int,int)>)>.Create((a, b) =>
-                {
-                    if (a.Item1 != b.Item1)
-                        return a.Item1.CompareTo(b.Item1);
-                    if (a.Item2.Item1 != b.Item2.Item1)
-                        return a.Item2.Item1.CompareTo(b.Item2.Item1);
-                    if (a.Item2.Item2 != b.Item2.Item2)
-                        return a.Item2.Item2.CompareTo(b.Item2.Item2);
-                    return 0;
-                }));
+            Queue = new SortedSet<(int, (int, int), Direction, List<(int, int)>)>(
+                Comparer<(int, (int, int), Direction, List<(int, int)>)>.Create((a, b) =>
+                 {
+                     if (a.Item1 != b.Item1)
+                         return a.Item1.CompareTo(b.Item1);
+                     if (a.Item2.Item1 != b.Item2.Item1)
+                         return a.Item2.Item1.CompareTo(b.Item2.Item1);
+                     if (a.Item2.Item2 != b.Item2.Item2)
+                         return a.Item2.Item2.CompareTo(b.Item2.Item2);
+                     return 0;
+                 }));
 
             Map = new char[_height, _width];
             for (var row = 0; row < _height; row++)
@@ -96,7 +95,7 @@ namespace Day16
         /// Get Best score and store in maze and track all shortest paths.
         /// </summary>
         public int GetBestScore()
-        {      
+        {
             // Add the starting position.
             Queue.Add((0, StartPos, Direction.East, null));
             Costs[StartPos] = 0;
@@ -144,5 +143,66 @@ namespace Day16
             }
             return BestScore;
         }
-   }
+
+        /// <summary>
+        /// Slightly different approach for part 2.
+        /// </summary>
+        /// <returns>List of all paths.</returns>
+        public List<List<(int,int)>> GetBestPaths()
+        {            
+            var path = new List<(int, int)> { StartPos };
+            var queue = new Queue<State>();
+            var seed = new State(StartPos, Direction.East, 0, path);
+            queue.Enqueue(seed);
+            var bestScore = int.MaxValue;
+            var bestPaths = new List<List<(int, int)>>();
+            var minScores = new Dictionary<((int, int), Direction), int>();
+
+            while (queue.Count > 0)
+            {
+                var state = queue.Dequeue();                
+                if (state.Score > bestScore) continue;                
+                var (row, col) = state.Position;
+
+                if (Map[row,col] == 'E')
+                {
+                    if (state.Score == bestScore)
+                    {
+                        bestPaths.Add(new List<(int,int)>(state.Path));
+                    }
+                    else if (state.Score < bestScore)
+                    {
+                        bestPaths = new List<List<(int, int)>> { state.Path };
+                        bestScore = state.Score;
+                    }
+                    continue;
+                }
+
+                var forward = state.Step();
+                if (Map[forward.Position.Item1, forward.Position.Item2] != '#')
+                    EnqueueIfBetter(forward);
+
+                var left = state.Rotate(false).Step();
+                if (Map[left.Position.Item1, left.Position.Item2] != '#')
+                    EnqueueIfBetter(left);
+
+                var right = state.Rotate(true).Step();
+                if (Map[right.Position.Item1, right.Position.Item2] != '#')
+                    EnqueueIfBetter(right);
+            }
+
+            return bestPaths;
+
+            void EnqueueIfBetter(State candidate)
+            {
+                var key = (candidate.Position, candidate.Direction);
+                var score = minScores.GetValueOrDefault(key, int.MaxValue);
+                if (score >= candidate.Score)
+                {
+                    minScores[key] = candidate.Score;
+                    queue.Enqueue(candidate);
+                }
+            }
+        }
+    }
 }

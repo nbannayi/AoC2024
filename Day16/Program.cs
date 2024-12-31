@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 // Day 16: Reindeer Maze.
 namespace Day16
@@ -16,7 +17,9 @@ namespace Day16
             Console.WriteLine($"Part 1 answer: {bestScore}");
 
             // Part 2.
-            Console.WriteLine($"Part 2 answer: TODO");
+            var bestPaths = maze.GetBestPaths();
+            var noUniqueSeats = bestPaths.SelectMany(p => p).Distinct().Count();
+            Console.WriteLine($"Part 2 answer: {noUniqueSeats}");
         }
     }
 }
