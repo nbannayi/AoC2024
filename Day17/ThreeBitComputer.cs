@@ -5,7 +5,7 @@ using System.Linq;
 namespace Day17
 {
     public class ThreeBitComputer
-    {     
+    {
         public enum Instruction
         {
             ADV,
@@ -46,7 +46,7 @@ namespace Day17
             _instructionPointer = 0;
             A = a;
             B = b;
-            C = c;            
+            C = c;
         }
 
         /// <summary>
@@ -92,12 +92,12 @@ namespace Day17
         public void DisplayProgram(bool convertToMnemonics)
         {
             var programStringList = new List<string>();
-            for (var i = 0; i <= Program.Count-2; i+=2)
+            for (var i = 0; i <= Program.Count - 2; i += 2)
             {
                 var programOpCode = Program[i];
                 var programOpCodeString = convertToMnemonics ?
                     ((Instruction)Enum.ToObject(typeof(Instruction), programOpCode)).ToString() :
-                    programOpCode.ToString();                
+                    programOpCode.ToString();
                 var programOperandString = Program[i + 1].ToString();
                 programStringList.Add(programOpCodeString);
                 programStringList.Add(programOperandString);
@@ -115,6 +115,7 @@ namespace Day17
             DisplayRegisters();
             Console.WriteLine();
             DisplayProgram(convertToMnemonics);
+            Console.WriteLine($"Output : {GetOutput()}");
         }
 
         /// <summary>
@@ -125,7 +126,7 @@ namespace Day17
         {
             return Output.Count > 0 ?
                 string.Join(",", Output) :
-                "";            
+                "";
         }
 
         /// <summary>
@@ -136,26 +137,26 @@ namespace Day17
         {
             if (debug) MemoryDump(false);
             while (_instructionPointer < Program.Count)
-            {                
+            {
                 var instruction = (Instruction)Enum.
                     ToObject(typeof(Instruction), Program[_instructionPointer]);
                 var operand = Program[_instructionPointer + 1];
-                                
+
                 switch (instruction)
                 {
                     case Instruction.ADV:
                         var comboOperand = GetComboOperand(operand);
-                        A /= (int)Math.Pow(2, comboOperand);
-                        _instructionPointer+=2;
+                        A /= (long)Math.Pow(2.0, comboOperand);
+                        _instructionPointer += 2;
                         break;
                     case Instruction.BXL:
                         B ^= operand;
-                        _instructionPointer+=2;
+                        _instructionPointer += 2;
                         break;
                     case Instruction.BST:
                         comboOperand = GetComboOperand(operand);
                         B = comboOperand % 8;
-                        _instructionPointer +=2;
+                        _instructionPointer += 2;
                         break;
                     case Instruction.JNZ:
                         if (A != 0)
@@ -175,18 +176,18 @@ namespace Day17
                         break;
                     case Instruction.BDV:
                         comboOperand = GetComboOperand(operand);
-                        B = A / (int)Math.Pow(2, comboOperand);
+                        B = A / (long)Math.Pow(2.0, comboOperand);
                         _instructionPointer += 2;
                         break;
                     case Instruction.CDV:
                         comboOperand = GetComboOperand(operand);
-                        C = A / (int)Math.Pow(2, comboOperand);
-                        _instructionPointer += 2;                        
+                        C = A / (long)Math.Pow(2.0, comboOperand);
+                        _instructionPointer += 2;
                         break;
                 }
                 if (debug)
                 {
-                    //Console.Clear();
+                    Console.Clear();
                     Console.WriteLine();
                     MemoryDump(true);
                     Console.WriteLine($"Output : {GetOutput()}");
@@ -218,6 +219,54 @@ namespace Day17
                         throw new Exception("Combo operand 7 is reserved and should not appear in valid programs.");
                 }
                 return comboOperand;
+            }
+        }
+
+        /// <summary>
+        /// Get quine for part 2.
+        /// </summary>
+        /// <returns>Long value of A register that produces quine.</returns>
+        public long GetQuineARegister()
+        {
+            // Return the minimum solution for a quine.
+            var allSolutions = GetQuine(0, 0);
+            return allSolutions.Min();
+
+            // Perform recursive DFS to search for quine.
+            List<long> GetQuine(long current, int depth)
+            {
+                var allSolutions = new List<long>();
+                if (depth > Program.Count - 1) return allSolutions;
+                var a = current * 8;
+                for (int i = 0; i < 8; i++)
+                {
+                    Reset();
+                    A = a + i;
+                    Run(false);
+                    if (CheckOutput(depth + 1))
+                    {
+                        if (depth + 1 == Program.Count) allSolutions.Add(a + i);
+                        allSolutions.AddRange(GetQuine(a + i, depth + 1));
+                    }
+                }
+                return allSolutions;
+            }
+
+            // Check last 'n' values of program match output.
+            bool CheckOutput(int n)
+            {
+                var programLen = Program.Count;
+                var outputLen = Output.Count;
+                var matched = true;
+                for (var i = 0; i < n; i++)
+                {
+                    if (Output[outputLen - i - 1] != Program[programLen - i - 1])
+                    {
+                        matched = false;
+                        break;
+                    }
+                }
+                return matched;
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 // Day 17: Chronospatial Computer.
 namespace Day17
@@ -19,12 +21,19 @@ namespace Day17
             computer.LoadProgram(program);
 
             // Part 1.            
-            computer.Run(false);
-            Console.WriteLine($"Part 1 answer: {computer.GetOutput()}");            
+            computer.Run(false);            
+            Console.WriteLine($"Part 1 answer: {computer.GetOutput()}");
 
             // Part 2 - quine.
             // Target: 2,4,1,1,7,5,4,4,1,4,0,3,5,5,3,0
-            Console.WriteLine($"Part 2 answer: TODO");
+            var quineRegisterA = computer.GetQuineARegister();
+            Console.WriteLine($"Part 2 answer: {quineRegisterA}");
+
+            // Uncomment to check. vvv
+            //computer.Reset();
+            //computer.A = quineRegisterA;
+            //computer.Run(false);
+            //computer.MemoryDump(false);
         }
 
         // Get all details to load the computer.
