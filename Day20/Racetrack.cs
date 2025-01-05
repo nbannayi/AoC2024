@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Day20
 {
@@ -60,7 +61,7 @@ namespace Day20
         /// </summary>
         /// <param name="pos">Position to cheat from.</param>
         /// <returns>List of available cheats.</returns>
-        public List<Cheat> GetCheats1((int, int) pos)
+        public List<Cheat> GetCheats((int, int) pos)
         {
             var cheats = new List<Cheat>();
             if (GetCheat(pos, (-1, 0), out Cheat? cheat) && cheat != null) cheats.Add(cheat.Value); // Up.
@@ -107,13 +108,13 @@ namespace Day20
             var summary = new SortedDictionary<int, int>();
             foreach (var pos in Path)
             {
-                var cheats = part2 ? GetCheats(pos, 20) : GetCheats1(pos);
+                var cheats = part2 ? GetCheats(pos, 20) : GetCheats(pos);
                 foreach (var cheat in cheats)
                 {
                     if (summary.ContainsKey(cheat.Saving))
                         summary[cheat.Saving]++;
                     else
-                        summary[cheat.Saving] = 1;
+                        if (cheat.Saving > 0) summary[cheat.Saving] = 1; // Only genuine savings wanted.
                 }
             }
             return summary;
