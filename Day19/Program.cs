@@ -23,7 +23,7 @@ namespace Day19
 
             // Part 2.
             long totalNoTowelCombos = 0;
-            foreach (var towel in towels)
+            foreach (var towel in towels) 
                 totalNoTowelCombos += FindNoTowelCombinations(towel, patterns);
             Console.WriteLine($"Part 2 answer: {totalNoTowelCombos}");
         }
