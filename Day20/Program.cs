@@ -11,7 +11,7 @@ namespace Day20
 
             // Part 1.
             var totalGreaterThanOrEqual100 = 0;
-            var cheatsSummary1 = racetrack.GetCheatsSummary(false);
+            System.Collections.Generic.SortedDictionary<int, int> cheatsSummary1 = racetrack.GetCheatsSummary(false);
             foreach (var kvp in cheatsSummary1)            
                 if (kvp.Key >= 64)
                     totalGreaterThanOrEqual100 += kvp.Value;
