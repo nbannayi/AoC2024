@@ -17,6 +17,11 @@ namespace Day20
             End = end;
             Saving = saving;
         }
+
+        public override string ToString()
+        {
+            return $"{Start}-{End}: {Saving}";
+        }
     }
 
     public class Racetrack
@@ -94,8 +99,33 @@ namespace Day20
         /// <returns>List of available cheats.</returns>
         public List<Cheat> GetCheats((int, int) pos, int maxPicosecs)
         {
-            // TODO.
-            return new List<Cheat>();
+            var cheats = new List<Cheat>();
+
+            // First get index of pos.
+            var startIndex = 0;
+            for (int i = 0; i < Path.Count; i++)
+            {
+                if (Path[i] == pos)
+                {
+                    startIndex = i;
+                    break;
+                }
+            }
+
+            // Now starting from this Index find all points on the path which have a Manhattan distance
+            // <= maxPicosecs, this will be the full set of valid cheats.
+            for (int i = startIndex; i < Path.Count; i++)
+            {
+                var targetPos = Path[i];
+                var manhattanDist = Math.Abs(pos.Item1 - targetPos.Item1) + Math.Abs(pos.Item2 - targetPos.Item2);
+                if (manhattanDist <= maxPicosecs)
+                {
+                    var saving = _trackWeights[pos.Item1, pos.Item2] - _trackWeights[targetPos.Item1, targetPos.Item2] - manhattanDist;
+                    cheats.Add(new Cheat(pos, targetPos, saving));
+                }
+            }
+
+            return cheats;
         }
 
         /// <summary>
@@ -106,6 +136,7 @@ namespace Day20
         public SortedDictionary<int, int> GetCheatsSummary(bool part2)
         {
             var summary = new SortedDictionary<int, int>();
+            
             foreach (var pos in Path)
             {
                 var cheats = part2 ? GetCheats(pos, 20) : GetCheats(pos);
@@ -114,9 +145,11 @@ namespace Day20
                     if (summary.ContainsKey(cheat.Saving))
                         summary[cheat.Saving]++;
                     else
+                    {
                         if (cheat.Saving > 0) summary[cheat.Saving] = 1; // Only genuine savings wanted.
+                    }
                 }
-            }
+            }            
             return summary;
         }
 
@@ -136,7 +169,7 @@ namespace Day20
         // Check position is inside maze track.
         private bool InBounds(int row, int col)
         {
-            return (row >= 0 && row < _noRows && col >= 0 && col < _noCols);
+            return (row > 0 && row < _noRows && col > 0 && col < _noCols);
         }
 
         // Walk round from start to end and set track weights.
