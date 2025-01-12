@@ -16,21 +16,24 @@ namespace Day21
             // Create robot keypads.
             var numericKeypad = new Keypad(KeypadType.Numeric);
             var directionalKeypad = new Keypad(KeypadType.Directional);
-                                  
-            // Part 1.
+
+            // Part 1.            
             var totalComplexity = 0;
             foreach (var code in codes)
             {
                 var paths = numericKeypad.EnterCode(code);
-                var paths2 = new List<string>();
-                var paths3 = new List<string>();
+                var paths2 = new List<string>();                
                 foreach (var path in paths)
                     paths2.AddRange(directionalKeypad.EnterCode(path));
+                var paths3 = new List<string>();
                 foreach (var path in paths2)
                     paths3.AddRange(directionalKeypad.EnterCode(path));                
                 totalComplexity += paths3.Select(p => Complexity(p, code)).Min();
             }
             Console.WriteLine($"Part 1 answer: {totalComplexity}");            
+
+            // Part 2.
+            Console.WriteLine("Part 2 answer: TODO");
         }
 
         // Get the complexity which is product of directions x numeric part of code.
