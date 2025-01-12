@@ -1,5 +1,6 @@
 ﻿using System;
 
+// Day 20: Race Condition.
 namespace Day20
 {
     class Program
