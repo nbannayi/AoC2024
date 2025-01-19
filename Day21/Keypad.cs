@@ -43,18 +43,32 @@ namespace Day21
             { '1', '2', '3' },
             { ' ', '0', 'A' }
         };
-
-        private Dictionary<(char, char), List<string>> _shortestPaths;
+        
         private Dictionary<char, (int,int)> _keyPositions;
+        public Dictionary<(char, char), int> Costs { get; set; }
+        public Dictionary<(char, char), List<string>> ShortestPaths { get; set; }
 
         /// <summary>
         /// Represents a robot operated keypad.
         /// </summary>
         public Keypad(KeypadType keypadType)
         {
-            _shortestPaths = new Dictionary<(char, char), List<string>>();
+            ShortestPaths = new Dictionary<(char, char), List<string>>();
             _keyPositions = new Dictionary<char, (int, int)>();
-            KeypadType = keypadType;            
+            Costs = new Dictionary<(char, char), int>();
+            KeypadType = keypadType;
+
+            var dirs = KeypadType == KeypadType.Directional ?
+                new char[] { '^', 'A', '<', 'v', '>' } :
+                new char[] { 'A', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+            foreach (var dir1 in dirs)
+            {
+                foreach (var dir2 in dirs)
+                {
+                    GetShortestPaths(dir1, dir2);                    
+                }
+            }
         }
 
         /// <summary>
@@ -69,7 +83,7 @@ namespace Day21
             for (var i = 0; i < code.Length - 1; i++)
             {
                 var (char1, char2) = (code[i], code[i + 1]);                
-                allPaths.Add(GetShortestPaths(char1, char2));
+                allPaths.Add(ShortestPaths[(char1, char2)]);
             }
 
             List<string> Combine(List<List<string>> lists, int index = 0, string current = "")
@@ -96,7 +110,7 @@ namespace Day21
         /// <returns>List of all shortest path strings.</returns>
         public List<string> GetShortestPaths(char startKey, char endKey)
         {
-            if (!_shortestPaths.ContainsKey((startKey, endKey)))
+            if (!ShortestPaths.ContainsKey((startKey, endKey)))
             {
                 var keypad = KeypadType == KeypadType.Directional ? _directionalKeypad : _numericKeypad;
 
@@ -168,11 +182,13 @@ namespace Day21
                                 break;
                         }
                     }
-                    pathDirs.Add(dirs);
+                    // Optimisation, don't add zig zags.
+                    if (!IsZigZag(dirs)) pathDirs.Add(dirs);
                 }
-                _shortestPaths[(startKey, endKey)] = pathDirs;
+                ShortestPaths[(startKey, endKey)] = pathDirs;
+                Costs[(startKey, endKey)] = pathDirs[0].Length;
             }
-            return _shortestPaths[(startKey, endKey)];
+            return ShortestPaths[(startKey, endKey)];
 
             // Inner function to create paths.
             void ReconstructPaths((int,int) current, (int,int) start, Dictionary<(int,int), List<(int,int)>> parents,
@@ -215,6 +231,22 @@ namespace Day21
                 _keyPositions[key] = keyPos;
             }
             return _keyPositions[key];
+        }
+
+        // Return true if a zig zag e.g. ^<^<, false otherwise.
+        private bool IsZigZag(string directions)
+        {
+            if (directions.Length < 3) return false;
+            if (directions[0] == directions[1]) return false;
+            for (int n = 0; n < 2; n++)
+            {
+                for (int i = n; i < directions.Length-2; i += 2)
+                {
+                    var (l, r) = (directions[i], directions[i + 2]);
+                    if (l != r) return false;
+                }
+            }
+            return true;
         }
     }
 }
