@@ -15,6 +15,8 @@ namespace Day22
         private List<((int, int, int, int), int)> _diffSeqPrices;
         public List<((int, int, int, int), int)> DiffSeqPrices { get { return _diffSeqPrices; } }
 
+        private Dictionary<(int, int, int, int), int> _cache = new Dictionary<(int, int, int, int), int>();
+
         /// <summary>
         /// Represents a monkeymarket secret number.
         /// </summary>
@@ -66,6 +68,21 @@ namespace Day22
                         _diffSeqPrices.Add((_diffSeqs[l], _endDigits[l + 4]));
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the first sequence's price. 
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <returns>First price related to sequence.</returns>
+        public int GetDiffSeqPrice((int,int,int,int) sequence)
+        {
+            if (!_cache.ContainsKey(sequence))
+            {
+                var seqPrice = _diffSeqPrices.Find(s => s.Item1 == sequence).ToTuple();
+                _cache[sequence] = seqPrice.Item2;
+            }
+            return _cache[sequence];
         }
 
         // Get last digit of a given number.
