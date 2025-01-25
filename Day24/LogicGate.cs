@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Day24
 {
@@ -29,6 +30,15 @@ namespace Day24
             InputLabel2 = inputLabel2;
             Operation = operation;
             OutputLabel = outputLabel;
+        }
+
+        /// <summary>
+        /// Create an exact clone of this object.
+        /// </summary>
+        /// <returns>Clone of object.</returns>
+        public LogicGate Clone()
+        {
+            return new LogicGate(InputLabel1, InputLabel2, Operation, OutputLabel);
         }
 
         /// <summary>
@@ -66,6 +76,6 @@ namespace Day24
         public override string ToString()
         {
             return $"{InputLabel1} {Operation} {InputLabel2} -> {OutputLabel}";
-        }
+        }        
     }
 }

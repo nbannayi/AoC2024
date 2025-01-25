@@ -10,57 +10,63 @@ namespace Day24
     {
         static void Main(string[] args)
         {
-            // Parse raw inputs.
+            // Parse raw inputs and create adder
             var fileName = "Day24Input.txt";
-            var (inputsDict, gatesDict) = ParseInputs(fileName);
-
-            // Process it all.
-            var processedInputs = ProcessLogicGates(inputsDict, gatesDict);
+            var (inputsDict, gatesDict) = ParseInputs(fileName);            
+            var adder = new Adder(inputsDict, gatesDict);
 
             // Part 1.
-            Console.WriteLine($"Part 1 answer: {ConvertResultBoolsToInt(processedInputs)}");
+            Console.WriteLine($"Part 1 answer: {adder.GetResult()}");
 
-            // Part 2.
-            Console.WriteLine($"Part 2 answer: TODO");
+            // Part 2.  Had to get hints from Reddit for this one, settled on trying to work
+            // out the invalid gates as brute force not feasible, turns out this is a 45-bit ripple carry adder. 
+            Console.WriteLine($"Part 2 answer: {GetInvalidGates(gatesDict)}");
         }
 
-        // Convert a sequence of boolean values representing a binary string to a number.
-        static long ConvertResultBoolsToInt(Dictionary<string, bool> processedInputs)
+        // Work out all invalid gates using rules of how a ripple adder should work.
+        static string GetInvalidGates(Dictionary<string, LogicGate> gates)
         {
-            var kvpZList = processedInputs.
-                Where(kvp => kvp.Key.StartsWith('z')).
-                OrderByDescending(kvp => kvp.Key).                
+            var gatesList = gates.Select(kvp => kvp.Value).ToList();
+
+            var invalidGates1 =
+                gatesList.Where(g => g.OutputLabel.StartsWith('z') &&
+                g.Operation != Operation.XOR &&
+                g.OutputLabel != "z45").
                 ToList();
-            var resultBinaryString = "";
-            foreach (var kvpZ in kvpZList)            
-                resultBinaryString += kvpZ.Value ? "1" : "0";
-            return Convert.ToInt64(resultBinaryString, 2);
+
+            var invalidGates2 =
+                gatesList.Where(g => !g.OutputLabel.StartsWith('z') &&
+                !g.InputLabel1.StartsWith('x') && !g.InputLabel2.StartsWith('x') &&
+                !g.InputLabel1.StartsWith('y') && !g.InputLabel2.StartsWith('y') &&
+                g.Operation == Operation.XOR).
+                ToList();
+
+            var invalidGates3 =
+                gatesList.Where(g => (g.InputLabel1.StartsWith('x') || g.InputLabel2.StartsWith('x') ||
+                g.InputLabel1.StartsWith('y') || g.InputLabel2.StartsWith('y')) &&
+                g.Operation == Operation.XOR &&
+                !gatesList.Any(g2 => (g2.InputLabel1 == g.OutputLabel || g2.InputLabel2 == g.OutputLabel) && g2.Operation == Operation.XOR))
+                .Where(g => !g.InputLabel1.Contains("00")).
+                ToList();
+
+            var invalidGates4 =
+                gatesList.Where(g => (g.InputLabel1.StartsWith('x') || g.InputLabel2.StartsWith('x') ||
+                g.InputLabel1.StartsWith('y') || g.InputLabel2.StartsWith('y')) &&
+                g.Operation == Operation.AND &&
+                !gatesList.Any(g2 => (g2.InputLabel1 == g.OutputLabel || g2.InputLabel2 == g.OutputLabel) && g2.Operation == Operation.OR))
+                .Where(g => !g.InputLabel1.Contains("00")).
+                ToList();
+
+            var invalidGates = invalidGates1.
+                Concat(invalidGates2).
+                Concat(invalidGates3).
+                Concat(invalidGates4).
+                Distinct().
+                OrderBy(ig => ig.OutputLabel);
+
+            return string.Join(',', invalidGates.Select(g => g.OutputLabel));
         }
 
-        // Process all logic gates from inputs and gates dicts.
-        static Dictionary<string, bool> ProcessLogicGates(
-            Dictionary<string, bool> inputsDict,
-            Dictionary<string, LogicGate> gatesDict)
-        {
-            var keysToRemove = new List<string>();            
-            while (gatesDict.Count > 0)
-            {
-                keysToRemove.Clear();
-                foreach (var kvp in gatesDict)
-                {
-                    var gate = kvp.Value;
-                    if (gate.Evaluate(inputsDict, out bool result))
-                    {
-                        keysToRemove.Add(gate.ToString());
-                        inputsDict.Add(gate.OutputLabel, result);
-                    }
-                }                
-                foreach (var key in keysToRemove)
-                    gatesDict.Remove(key);
-            }
-            return inputsDict;
-        }
-            
         // Parse everything.
         static (Dictionary<string, bool>, Dictionary<string, LogicGate>) ParseInputs(string inputFile)
         {
